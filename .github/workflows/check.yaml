@@ -1,0 +1,43 @@
+name: check
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    paths:
+      - "**.go"
+      - ".github/workflows/check.yml"
+      - "go.mod"
+      - "go.sum"
+      - ".go-version"
+      - "testdata/**"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - id: go-version
+        name: Determine the version of Go
+        run: |
+          go_version=$(perl -ne 'print $1 if /^go (([0-9]+\.){1,2}[0-9]+)/' < go.mod)
+          echo "::set-output name=this::$go_version"
+
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ steps.go-version.outputs.this }}
+
+      - name: Check format
+        run: |
+          diffs="$(gofmt -d .)"
+          if [[ "$diffs" != "" ]]; then
+            echo "$diffs" >&2
+            exit 1
+          fi
+
+      - name: Run test
+        run: |
+          make test
