@@ -42,7 +42,7 @@ func (o *InputOptions) init() {
 // Returns an empty string if the value is not defined.
 func GetInput(name string, options *InputOptions) (string, error) {
 	options = initializeInputOptions(options)
-	envKey := strings.ToTitle(strings.ReplaceAll(name, " ", "_"))
+	envKey := fmt.Sprintf("INPUT_%s", strings.ToTitle(strings.ReplaceAll(name, " ", "_")))
 	val := os.Getenv(envKey)
 	if *options.Required && val == "" {
 		return val, fmt.Errorf("Input required and not supplied: %s", name)
