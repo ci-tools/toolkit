@@ -37,6 +37,22 @@ func (o *InputOptions) init() {
 	}
 }
 
+// GetMultipleInput obtains the values of a multiline input.  Each value is also trimmed.
+func GetMultipleInput(name string, options *InputOptions) ([]string, error) {
+	withNewLine, err := GetInput(name, options)
+	if err != nil {
+		return nil, err
+	}
+	inputs := strings.Split(withNewLine, "\n")
+	res := make([]string, 0, len(inputs))
+	for _, line := range inputs {
+		if line != "" {
+			res = append(res, line)
+		}
+	}
+	return res, nil
+}
+
 // GetInput obtains the value of an input.
 // Unless TrimWhitespace is set to false in InputOptions, the value is also trimmed.
 // Returns an empty string if the value is not defined.
