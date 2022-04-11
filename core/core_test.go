@@ -1,8 +1,6 @@
 package core
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	"github.com/ci-tools/toolkit/ptr"
@@ -13,6 +11,13 @@ type env struct {
 	val string
 }
 
+func setEnvVars(t *testing.T, vars []env) {
+	for _, kv := range vars {
+		t.Setenv(kv.key, kv.val)
+	}
+}
+
+/* TODO: remove the comment below after creating tests w/ testing.Setenv
 func init() {
 	testEnvVars := []env{
 		{key: "INPUT_MY_INPUT", val: "val"},
@@ -38,8 +43,17 @@ func init() {
 		}
 	}
 }
+*/
 
 func Test_GetInput(t *testing.T) {
+	setEnvVars(t, []env{
+		{key: "INPUT_MY_INPUT", val: "val"},
+		{key: "INPUT_MISSING", val: ""},
+		{key: "INPUT_SPECIAL_CHARS_'\t\"\\", val: "'\t\"\\ response "},
+		{key: "INPUT_MULTIPLE_SPACES_VARIABLE", val: "I have multiple spaces"},
+		{key: "INPUT_WITH_TRAILING_WHITESPACE", val: "  some val  "},
+	})
+
 	table := []struct {
 		name     string
 		options  *InputOptions
