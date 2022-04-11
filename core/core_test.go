@@ -1,8 +1,6 @@
 package core
 
 import (
-	"log"
-	"os"
 	"testing"
 
 	"github.com/ci-tools/toolkit/ptr"
@@ -13,6 +11,7 @@ type env struct {
 	val string
 }
 
+/* TODO: remove the comment below after creating tests w/ testing.Setenv
 func init() {
 	testEnvVars := []env{
 		{key: "INPUT_MY_INPUT", val: "val"},
@@ -38,6 +37,7 @@ func init() {
 		}
 	}
 }
+*/
 
 func Test_GetInput(t *testing.T) {
 	table := []struct {
