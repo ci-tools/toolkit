@@ -68,3 +68,24 @@ func GetInput(name string, options *InputOptions) (string, error) {
 	}
 	return strings.TrimSpace(val), nil
 }
+
+// GetBooleanInput obtains the input value of the boolean type in the YAML 1.2 "core schema" specification.
+// Support boolean input list: `true | True | TRUE | false | False | FALSE` .
+// The return value is also in boolean type.
+// ref: https://yaml.org/spec/1.2/spec.html#id2804923
+func GetBooleanInput(name string, options *InputOptions) (bool, error) {
+	val, err := GetInput(name, options)
+	if err != nil {
+		return false, err
+	}
+	switch val {
+	case "true", "True", "TRUE":
+		return true, nil
+	case "false", "False", "FALSE":
+		return false, nil
+	default:
+		return false, fmt.Errorf(getBooleanErrFmt, val)
+	}
+}
+
+const getBooleanErrFmt = "Input does not meet YAML 1.2 \"Core Schema\" specification: %s\nSupport boolean input list: \\`true | True | TRUE | false | False | FALSE\\`"
