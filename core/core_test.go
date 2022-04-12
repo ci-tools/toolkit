@@ -155,13 +155,6 @@ describe('@actions/core', () => {
     }
   })
 
-  beforeEach(() => {
-    for (const key in testEnvVars) {
-      process.env[key] = testEnvVars[key as keyof typeof testEnvVars]
-    }
-    process.stdout.write = jest.fn()
-  })
-
   it('legacy exportVariable produces the correct command and sets the env', () => {
     core.exportVariable('my var', 'var val')
     assertWriteCalls([`::set-env name=my var::var val${os.EOL}`])
@@ -242,79 +235,6 @@ describe('@actions/core', () => {
       `myPath${path.delimiter}path1${path.delimiter}path2`
     )
     assertWriteCalls([`::add-path::myPath${os.EOL}`])
-  })
-
-  it('getInput gets non-required input', () => {
-    expect(core.getInput('my input')).toBe('val')
-  })
-
-  it('getInput gets required input', () => {
-    expect(core.getInput('my input', {required: true})).toBe('val')
-  })
-
-  it('getInput throws on missing required input', () => {
-    expect(() => core.getInput('missing', {required: true})).toThrow(
-      'Input required and not supplied: missing'
-    )
-  })
-
-  it('getInput does not throw on missing non-required input', () => {
-    expect(core.getInput('missing', {required: false})).toBe('')
-  })
-
-  it('getInput is case insensitive', () => {
-    expect(core.getInput('My InPuT')).toBe('val')
-  })
-
-  it('getInput handles special characters', () => {
-    expect(core.getInput('special chars_\'\t"\\')).toBe('\'\t"\\ response')
-  })
-
-  it('getInput handles multiple spaces', () => {
-    expect(core.getInput('multiple spaces variable')).toBe(
-      'I have multiple spaces'
-    )
-  })
-
-  it('getMultilineInput works', () => {
-    expect(core.getMultilineInput('my input list')).toEqual([
-      'val1',
-      'val2',
-      'val3'
-    ])
-  })
-
-  it('getInput trims whitespace by default', () => {
-    expect(core.getInput('with trailing whitespace')).toBe('some val')
-  })
-
-  it('getInput trims whitespace when option is explicitly true', () => {
-    expect(
-      core.getInput('with trailing whitespace', {trimWhitespace: true})
-    ).toBe('some val')
-  })
-
-  it('getInput does not trim whitespace when option is false', () => {
-    expect(
-      core.getInput('with trailing whitespace', {trimWhitespace: false})
-    ).toBe('  some val  ')
-  })
-
-  it('getInput gets non-required boolean input', () => {
-    expect(core.getBooleanInput('boolean input')).toBe(true)
-  })
-
-  it('getInput gets required input', () => {
-    expect(core.getBooleanInput('boolean input', {required: true})).toBe(true)
-  })
-
-  it('getBooleanInput handles boolean input', () => {
-    expect(core.getBooleanInput('boolean input true1')).toBe(true)
-    expect(core.getBooleanInput('boolean input true2')).toBe(true)
-    expect(core.getBooleanInput('boolean input true3')).toBe(true)
-    expect(core.getBooleanInput('boolean input false1')).toBe(false)
-    expect(core.getBooleanInput('boolean input false2')).toBe(false)
-    expect(core.getBooleanInput('boolean input false3')).toBe(false)
   })
 
   it('getBooleanInput handles wrong boolean input', () => {
