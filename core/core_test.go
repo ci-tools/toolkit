@@ -1,6 +1,7 @@
 package core
 
 import (
+	"reflect"
 	"testing"
 
 	"github.com/ci-tools/toolkit/ptr"
@@ -77,6 +78,30 @@ func Test_GetInput(t *testing.T) {
 			t.Fatal("errors are not expected but found:", err)
 		}
 		if val != tt.expected {
+			t.Fatalf("expected value is %s, but result was %s.\ntest case: %v", tt.expected, val, table)
+		}
+	}
+}
+
+func Test_GetMultilineInput(t *testing.T) {
+	setEnvVars(t, []env{
+		{key: "INPUT_MY_INPUT_LIST", val: "val1\nval2\nval3"},
+	})
+
+	table := []struct {
+		name     string
+		options  *InputOptions
+		expected []string
+	}{
+		{name: "my input list", options: nil, expected: []string{"val1", "val2", "val3"}},
+	}
+
+	for _, tt := range table {
+		val, err := GetMultilineInput(tt.name, tt.options)
+		if err != nil {
+			t.Fatal("errors are not expected but found:", err)
+		}
+		if !reflect.DeepEqual(val, tt.expected) {
 			t.Fatalf("expected value is %s, but result was %s.\ntest case: %v", tt.expected, val, table)
 		}
 	}
