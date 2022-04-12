@@ -106,3 +106,40 @@ func Test_GetMultilineInput(t *testing.T) {
 		}
 	}
 }
+
+func Test_GetBooleanInput(t *testing.T) {
+	setEnvVars(t, []env{
+		{key: "INPUT_BOOLEAN_INPUT", val: "true"},
+		{key: "INPUT_BOOLEAN_INPUT_TRUE1", val: "true"},
+		{key: "INPUT_BOOLEAN_INPUT_TRUE2", val: "True"},
+		{key: "INPUT_BOOLEAN_INPUT_TRUE3", val: "TRUE"},
+		{key: "INPUT_BOOLEAN_INPUT_FALSE1", val: "false"},
+		{key: "INPUT_BOOLEAN_INPUT_FALSE2", val: "False"},
+		{key: "INPUT_BOOLEAN_INPUT_FALSE3", val: "FALSE"},
+	})
+
+	table := []struct {
+		name     string
+		options  *InputOptions
+		expected bool
+	}{
+		{name: "boolean input", options: nil, expected: true},
+		{name: "boolean input", options: &InputOptions{Required: ptr.Bool(true)}, expected: true},
+		{name: "boolean input true1", options: nil, expected: true},
+		{name: "boolean input true2", options: nil, expected: true},
+		{name: "boolean input true3", options: nil, expected: true},
+		{name: "boolean input false1", options: nil, expected: false},
+		{name: "boolean input false2", options: nil, expected: false},
+		{name: "boolean input false2", options: nil, expected: false},
+	}
+
+	for _, tt := range table {
+		val, err := GetBooleanInput(tt.name, tt.options)
+		if err != nil {
+			t.Fatal("errors are not expected but found:", err)
+		}
+		if val != tt.expected {
+			t.Fatalf("expected value is %v, but result was %v.\ntest case: %v", tt.expected, val, table)
+		}
+	}
+}
