@@ -37,8 +37,8 @@ func (o *InputOptions) init() {
 	}
 }
 
-// GetMultipleInput obtains the values of a multiline input.  Each value is also trimmed.
-func GetMultipleInput(name string, options *InputOptions) ([]string, error) {
+// GetMultilineInput obtains the values of a multiline input.  Each value is also trimmed.
+func GetMultilineInput(name string, options *InputOptions) ([]string, error) {
 	withNewLine, err := GetInput(name, options)
 	if err != nil {
 		return nil, err
